@@ -18,7 +18,7 @@ moverflow = function (lib, mem, exploit, string, start_shell, pathName)
 				printcolor("Target this as root and remove entry in system.log", "#ff0000")
 			end if
 		else if	type == "file" or type == "computer" then
-			printcolor(type, "#00ff00")
+			printcolor(type, "#00ffff")
 			text = null
 			if not pathName then
 				if type == "file" then text = getetcpass(result)
@@ -26,9 +26,29 @@ moverflow = function (lib, mem, exploit, string, start_shell, pathName)
 			else
 				if type == "file" then print(getfile(result, pathName))
 				if type == "computer" then 
+					// prints users in home
+					folderRemote = result.File("/home")
+					print("users registered")
+					usernames = folderRemote.get_folders
+					for user in usernames
+						print(user.name)						
+					end for				
 					file = result.File(pathName)
-					print(file.is_binary)
-					print(result.File(pathName).get_content)
+					print("")
+					print("files under this folder")
+					if file.is_folder then 
+						files = file.get_files
+						for f in files
+							print(f.name)
+						end for
+					end if
+					print("try to print file contents")
+					if file then
+						print(file.is_binary)
+						print(result.File(pathName).get_content)
+					else
+						print("File doesn't exist")
+					end if
 				end if
 			end if
 			if text then 
