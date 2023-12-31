@@ -1,5 +1,5 @@
 mscanlib = function (targetLib, directory)
-	libs = ["init.so", "kernel_module.so", "net.so", "aptclient.so", "crypto.so", "metaxploit.so"]
+	libs = ["init.so", "kernel_module.so", "kernel_router.so", "net.so", "aptclient.so", "crypto.so", "metaxploit.so", "libhttp.so", "libssh.so", "libftp.so", "libchat.so", "librshell.so", "librepository.so"]
 	
 	setupScan = function (libName)
 		if directory then
