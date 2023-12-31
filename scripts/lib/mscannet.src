@@ -28,12 +28,14 @@ mscannet = function (ip, port)
 	
 	if port then
 		net_session = metaxploit.net_use(ip, port)
-		port_object = router.ping_port(port)
-		print("Port library info")
-		if port_object then
-			print(router.port_info(port_object))
-		end if		
-		print("==============")
+		if router then
+			port_object = router.ping_port(port)
+			print("Port library info")
+			if port_object then
+				print(router.port_info(port_object))
+			end if		
+			print("==============")
+		end if
 	else 
 		net_session = metaxploit.net_use(ip)
 	end if

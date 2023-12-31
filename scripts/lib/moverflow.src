@@ -22,10 +22,14 @@ moverflow = function (lib, mem, exploit, string, start_shell)
 			text = null
 			if type == "file" then text = getetcpass(result)
 			if type == "computer" then text = getetcpass(result.File("/"))
-			items = decipherpass(text)
-			for item in items
-				print(item)
-			end for			
+			if text then 
+				printcolor("Passwords found", "#ff0000")
+				print(text)
+			end if
+			//items = decipherpass(text)
+			//for item in items
+			//	print(item)
+			//end for			
 		else
 			printcolor(type, "#ffffff")
 			print(result)
