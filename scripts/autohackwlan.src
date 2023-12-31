@@ -2,5 +2,12 @@ import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
 import_code("/home/tjmonsi/scripts/lib/parseparams.src")
 import_code("/home/tjmonsi/scripts/lib/connectwlan.src")
 
-config = parseparams("connectnetwork", ["network_device"])
-connectwlan(config.network_device)
+config = parseparams("connectnetwork", ["network_device", "target_network"], 1)
+
+target_network = null
+
+if config.hasIndex("target_network") then
+	target_network = config.target_network
+end if
+
+connectwlan(config.network_device, target_network)
