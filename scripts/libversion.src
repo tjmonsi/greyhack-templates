@@ -1,0 +1,7 @@
+import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+
+config = parseparams(program_path.split("/")[-1], ["libName"])
+
+lib = metaxploit.load("/lib/" + config.libName)
+print("lib: "+ lib.lib_name + " " + lib.version)
