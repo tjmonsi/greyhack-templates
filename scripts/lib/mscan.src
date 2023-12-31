@@ -31,6 +31,9 @@ mscan = function(lib, options)
 						textArray.push("0")
 					end if					
 				end if
+				if options.hasIndex("libPath") then
+					textArray.push(options.libPath)
+				end if
 				textArray.push(mem)
 				textArray.push(exploit)
 				textArray.push("</color></b>")

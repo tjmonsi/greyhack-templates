@@ -1,0 +1,21 @@
+import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
+import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
+import_code("/home/tjmonsi/scripts/lib/printcolor.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/tjmonsi/scripts/lib/mscanlib.src")
+import_code("/home/tjmonsi/scripts/lib/mscan.src")
+import_code("/home/tjmonsi/scripts/lib/moverflow.src")
+import_code("/home/tjmonsi/scripts/lib/getetcpass.src")
+import_code("/home/tjmonsi/scripts/lib/decipherpass.src")
+
+config = parseparams(program_path.split("/")[-1], ["libso", "directory"], 2)
+
+libso = null
+directory = null
+
+clear_screen
+
+if config.hasIndex("libso") then libso = config.libso
+if config.hasIndex("directory") then directory = config.directory
+
+mscanlib(libso, directory)
