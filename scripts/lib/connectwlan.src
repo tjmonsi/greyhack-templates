@@ -1,6 +1,6 @@
 // USAGE: tjx_connect_network("wlan0")
 
-connectwlan = function (network_device)
+connectwlan = function (network_device, target_wifi)
 	if not crypto then exit("Cannot find crypto.so")
 	
 	computer = get_shell.host_computer
@@ -17,7 +17,11 @@ connectwlan = function (network_device)
 	maxNetworkIndex = 0
 
 	for network in networkList
-		if network[1].replace("%", "").to_int >= maxNetwork then
+		if target_wifi != null and network[2] == target_wifi then
+			maxNetwork = network[1].replace("%", "").to_int
+			maxNetworkIndex = index
+			break
+		else if network[1].replace("%", "").to_int >= maxNetwork then
 			maxNetwork = network[1].replace("%", "").to_int
 			maxNetworkIndex = index
 		end if
@@ -63,4 +67,5 @@ connectwlan = function (network_device)
 	
 	print(["Connecting", network_device, "to", essid].join(" "))
 	computer.connect_wifi(network_device, bssid, essid, networkPass)
+	print(essid + ":" + networkPass)
 end function
