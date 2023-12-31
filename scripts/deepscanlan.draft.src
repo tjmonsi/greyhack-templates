@@ -1,0 +1,72 @@
+import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
+import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/tjmonsi/scripts/lib/findindex.src")
+import_code("/home/tjmonsi/scripts/lib/printcolor.src")
+import_code("/home/tjmonsi/scripts/lib/deepscanrouter.src")
+import_code("/home/tjmonsi/scripts/lib/getetcpass.src")
+import_code("/home/tjmonsi/scripts/lib/decipherpass.src")
+import_code("/home/tjmonsi/scripts/lib/moverflow.src")
+import_code("/home/tjmonsi/scripts/lib/mscan.src")
+import_code("/home/tjmonsi/scripts/lib/mscannet.src")
+
+config = parseparams(program_path.split("/")[-1], ["target_ip"], 1)
+
+target_ip = null
+
+if config.hasIndex("target_ip") then target_ip = config.target_ip
+
+computer = get_shell.host_computer
+networkGateway = computer.network_gateway
+publicIp = get_router(networkGateway).public_ip
+publicMainRouter = get_router(publicIp)
+
+results = deepscanrouter(networkGateway)
+
+if target_ip then
+	for device in results.deviceList
+		if device.deviceIp == target_ip then
+			print("exploiting without a port: " + device.parentIp)
+			mscannet(device.parentIp)
+			wait	
+			router = get_router(device.parentIp)			
+			usedPorts = router.used_ports
+			print("exploiting used ports: " + usedPorts.len + " ports - " + device.parentIp)
+			for port in usedPorts
+				print([router.port_info(port), port.port_number, port.get_lan_ip].join(" "))
+				mscannet(device.parentIp, port.port_number)
+			end for
+			devicePorts = router.device_ports(device.deviceIp)
+			print("exploiting device ports: " + devicePorts.len + " ports - " + device.parentIp)
+			for port in devicePorts
+				print([router.port_info(port), port.port_number, port.get_lan_ip].join(" "))
+				wait				
+				mscannet(device.parentIp, port.port_number)	
+			end for
+			wait
+				
+		end if
+	end for
+else
+	for device in results.routerList
+		print("exploiting without a port: " + device.routerIp)
+		mscannet(device.routerIp)	
+		wait
+		router = get_router(device.routerIp)
+		usedPorts = router.used_ports
+		print("exploiting used ports: " + usedPorts.len + " ports - " + device.routerIp)
+		for port in usedPorts
+			print([router.port_info(port), port.port_number, port.get_lan_ip].join(" "))
+			wait
+			mscannet(device.routerIp, port.port_number)
+		end for
+		devicePorts = publicMainRouter.device_ports(device.routerIp)
+		print("exploiting device ports: " + devicePorts.len + " ports - " + device.routerIp)
+		for port in devicePorts
+			print([router.port_info(port), port.port_number, port.get_lan_ip].join(" "))				
+			wait
+			mscannet(device.routerIp, port.port_number)
+		end for
+		wait		
+	end for	
+end if

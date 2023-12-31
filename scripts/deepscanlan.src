@@ -1,0 +1,53 @@
+import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
+import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/tjmonsi/scripts/lib/findindex.src")
+import_code("/home/tjmonsi/scripts/lib/printcolor.src")
+import_code("/home/tjmonsi/scripts/lib/deepscanrouter.src")
+
+config = parseparams(program_path.split("/")[-1], ["target_ip"], 1)
+
+target_ip = null
+
+clear_screen
+
+if config.hasIndex("target_ip") then target_ip = config.target_ip
+
+computer = get_shell.host_computer
+networkGateway = computer.network_gateway
+publicIp = get_router(networkGateway).public_ip
+publicMainRouter = get_router(publicIp)
+
+results = deepscanrouter(networkGateway)
+
+if target_ip then
+	for device in results.deviceList
+		if device.deviceIp == target_ip then
+			print("Target router: " + device.parentIp + " to access " + device.deviceIp)
+		end if
+	end for
+else
+	for device in results.routerList
+		print("exploiting without a port: " + device.routerIp)
+		print(device.routerIp)
+		print("kernel version: " + device.version)
+		
+		if device.ports.len > 0 then
+			print("---------------")
+			print("printing ports")
+			for port in device.ports
+				print(port)
+			end for
+		end if
+		
+		if device.deviceList.len > 0 then
+	
+			print("---------------")
+			print("printing devices connected to " + device.routerIp)
+			for deviceItem in device.deviceList
+				print("device ip: " + deviceItem.deviceIp)
+			end for
+		end if
+		print("============================")	
+	end for	
+end if

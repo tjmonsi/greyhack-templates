@@ -18,7 +18,7 @@ deepscanrouter = function (startIp)
 	_scanrouter = function (routerIp, parentIp)
 		router = get_router(routerIp)
 		if typeof(router) != "router" then
-			print("not router: " + routerIp)
+			print("device found connected to this router: " + routerIp)
 			if findindex(deviceList, routerIp, @_checkDeviceIndex) == null then
 				deviceList.push({ "deviceIp": routerIp, "parentIp": parentIp })
 			end if
@@ -26,9 +26,30 @@ deepscanrouter = function (startIp)
 			
 			visitedRouter = visitedRouter.push(routerIp)
 			devices = router.devices_lan_ip
+			usedPorts = router.used_ports
+			
+			portList = []
+			
+			for port in usedPorts
+				portInfo = router.port_info(port).split(" ")
+				portList.push({ "version": portInfo[1], "lib": portInfo[0], "port_number": port.port_number, "closed": port.is_closed, "ip": port.get_lan_ip  })				
+			end for
+		
+			deviceList = []
+		
+			for ip in devices
+				devicePorts = router.device_ports(ip)
+				devicePortList = []
+				for port in usedPorts
+					portInfo = router.port_info(port).split(" ")
+					devicePortList.push({ "version": portInfo[1], "lib": portInfo[0], "port_number": port.port_number, "closed": port.is_closed, "ip": port.get_lan_ip  })				
+				end for
+				deviceList.push({ "deviceIp": ip, "devicePortList": devicePortList })
+			end for			
 			
 			if findindex(routerList, routerIp, @_checkRouterIndex) == null then
-				routerList.push({ "routerIp": routerIp, "devices": devices, "version": router.kernel_version })
+				obj = { "routerIp": routerIp, "devices": devices, "version": router.kernel_version, "ports": portList, "deviceList": deviceList }
+				routerList.push(obj)
 			end if
 		
 			for device in devices
