@@ -1,4 +1,4 @@
-moverflow = function (lib, mem, exploit, string, start_shell)
+moverflow = function (lib, mem, exploit, string, start_shell, pathName)
 	if start_shell == null then start_shell = false
 	
 	if string then
@@ -20,8 +20,17 @@ moverflow = function (lib, mem, exploit, string, start_shell)
 		else if	type == "file" or type == "computer" then
 			printcolor(type, "#00ff00")
 			text = null
-			if type == "file" then text = getetcpass(result)
-			if type == "computer" then text = getetcpass(result.File("/"))
+			if not pathName then
+				if type == "file" then text = getetcpass(result)
+				if type == "computer" then text = getetcpass(result.File("/"))
+			else
+				if type == "file" then print(getfile(result, pathName))
+				if type == "computer" then 
+					file = result.File(pathName)
+					print(file.is_binary)
+					print(result.File(pathName).get_content)
+				end if
+			end if
 			if text then 
 				printcolor("Passwords found", "#ff0000")
 				print(text)

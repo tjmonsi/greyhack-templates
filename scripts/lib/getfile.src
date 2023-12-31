@@ -1,0 +1,44 @@
+getFile = function(file, pathName)
+	print("Starting search at: " + file.path)
+	
+	pathArray = pathName.split("/")
+	print(pathArray.pull)
+	
+	_gotoroot = function(folder)
+		if folder.parent then
+			return _gotoroot(folder.parent)
+		end if
+		return folder
+	end function
+
+	_nextFolder = function(parentfolder)
+		targetFolder = pathArray.pull
+		if pathArray.len == 0 then
+			files = folder.get_files
+			for file in files
+				if file.name == targetFolder then
+					if not file.has_permission("r") then
+						print("Can't access " + file.name)
+						return
+					end if
+					return file.get_content
+				end if				
+			end for
+		else 
+			folders = parentfolder.get_folders
+			for folder in folders
+				if folder.name == targetFolder then
+					if not folder.has_permission("r") then 
+						print("Can't access " + folder.name)
+						return
+					end if
+					_nextFolder(folder)					
+				end if
+			end for	
+		end if
+	end function	
+	
+	root = _gotoroot(file)
+	_nextFolder(root)
+
+end function
