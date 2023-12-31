@@ -1,0 +1,51 @@
+// USAGE: parseparams("myprogram", ["ip_address", "port", "memory"], 1)
+// params:
+// - cmd: the string of your command
+// - variableList: the list of variables you want to get
+// - optional: the number of optional variables starting from the end of the array
+// - description: the description of usage
+
+parseparams = function (cmd, variableList, optional, description)
+	if not description or not description isa string then
+		description = ""
+	end if
+
+	if not optional or optional < 0 or not optional isa number then
+		optional = 0
+	end if
+	
+	error_string_array = ["Usage:", cmd]
+	start_optional_index = variableList.len - optional
+	
+	index = 0
+	for item in variableList
+		if index < start_optional_index then	
+			error_string_array.push("[" + item + "]")
+		else 
+			error_string_array.push("(" + item + ")")
+		end if
+		index = index + 1
+	end for
+
+	error_string = error_string_array.join(" ") + "\n" + description + "\n"
+
+	if (params.len == 0 and params.len != start_optional_index) or (params.hasIndex(0) and (params[0] == "-h" or params[0] == "--help")) then
+		return exit(error_string)	
+	end if
+
+	if params.len < start_optional_index or params.len > variableList.len then
+		return exit(error_string)
+	end if
+	
+	obj = {}
+	index = 0
+	for param in params
+		if variableList.hasIndex(index) then
+			variable = variableList[index]
+			obj[variable] = param			
+		end if
+		index = index + 1
+	end for
+
+	return obj
+end function

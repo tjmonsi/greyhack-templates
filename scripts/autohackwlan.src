@@ -1,0 +1,6 @@
+import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/tjmonsi/scripts/lib/connectwlan.src")
+
+config = tjx_params_parser("connectnetwork", ["network_device"])
+connectwlan(config.network_device)

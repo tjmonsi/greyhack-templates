@@ -1,0 +1,7 @@
+// Loads libs from /lib or from /home/[active_user]
+
+// Tests if metaxploit is in lib
+globals.metaxploit = include_lib("/lib/metaxploit.so")
+// checks if metaxploit is in /home/active-user
+if not globals.metaxploit then globals.metaxploit = include_lib(home_dir + "/metaxploit.so")
+if not globals.metaxploit then exit("<color=#ff0000>Load metaxploit on either lib or home_dir</color>")

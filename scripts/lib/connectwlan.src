@@ -1,0 +1,66 @@
+// USAGE: tjx_connect_network("wlan0")
+
+connectwlan = function (network_device)
+	if not crypto then exit("Cannot find crypto.so")
+	
+	computer = get_shell.host_computer
+	crypto.airmon("start", network_device)
+
+	networks = computer.wifi_networks(network_device)
+	networkList = []
+	for network in networks
+		networkList = networkList + [network.split(" ")]
+	end for
+
+	index = 0
+	maxNetwork = 0
+	maxNetworkIndex = 0
+
+	for network in networkList
+		if network[1].replace("%", "").to_int >= maxNetwork then
+			maxNetwork = network[1].replace("%", "").to_int
+			maxNetworkIndex = index
+		end if
+		index = index + 1
+	end for
+
+	signalPower = networkList[maxNetworkIndex][1].replace("%", "").to_int
+	bssid = networkList[maxNetworkIndex][0]
+	essid = networkList[maxNetworkIndex][2]
+	maxAcks = 300000
+
+	print("Starting access on: " + bssid + ":" + essid)
+	
+	// based on https://steamcommunity.com/sharedfiles/filedetails/?id=1905138308
+	if signalPower <= 100 and signalPower >= 75 then
+		maxAcks = 4000
+	else if signalPower < 75 and signalPower >= 60 then
+	    maxAcks = 5000
+	else if signalPower < 60 and signalPower >= 50 then
+		maxAcks = 6000
+	else if signalPower < 50 and signalPower >= 40 then
+	    maxAcks = 7500
+	else if signalPower < 40 and signalPower >= 30 then
+	    maxAcks = 10000
+	else if signalPower < 30 and signalPower >= 20 then
+		maxAcks = 15000
+	else if signalPower < 20 and signalPower >= 10 then
+		maxAcks = 30000
+	end if
+
+	error = crypto.aireplay(bssid, essid, maxAcks)
+	
+	if error then exit(error)
+	
+	fileName = "/home/" + active_user + "/file.cap"
+	file = computer.File(fileName)
+	
+	if not file then exit("No file.cap found")
+	
+	networkPass = crypto.aircrack(fileName)
+	
+	if not networkPass then exit("No password found")
+	
+	print(["Connecting", network_device, "to", essid].join(" "))
+	computer.connect_wifi(network_device, bssid, essid, networkPass)
+end function

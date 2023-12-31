@@ -1,0 +1,48 @@
+deepscanrouter = function (startIp)
+	visitedRouter = []
+	deviceList = []
+	routerList = []
+	
+	// finds the index of the device given ipaddress
+	_checkDeviceIndex = function (item, ipaddress)
+		return item.deviceIp == ipaddress 
+	end function
+
+	// finds the index of the router given ipaddress
+	_checkRouterIndex = function (item, ipaddress)
+		return item.routerIp == ipaddress
+	end function
+	
+	// a recursive function that goes through all devices_lan_ip of the router
+	// to get all devices
+	_scanrouter = function (routerIp, parentIp)
+		router = get_router(routerIp)
+		if typeof(router) != "router" then
+			print("not router: " + routerIp)
+			if findindex(deviceList, routerIp, @_checkDeviceIndex) == null then
+				deviceList.push({ "deviceIp": routerIp, "parentIp": parentIp })
+			end if
+		else
+			
+			visitedRouter = visitedRouter.push(routerIp)
+			devices = router.devices_lan_ip
+			
+			if findindex(routerList, routerIp, @_checkRouterIndex) == null then
+				routerList.push({ "routerIp": routerIp, "devices": devices, "version": router.kernel_version })
+			end if
+		
+			for device in devices
+				//print(routerIp + ", " + device)
+				if visitedRouter.indexOf(device) == null then
+					_scanrouter(device, routerIp)
+				end if
+			end for
+		end if
+	end function
+
+	// starts the scanning
+	_scanrouter(startIp)
+	
+	// returns a similar mapping procedure like ScanLan
+	return { "routerList": routerList, "deviceList": deviceList }
+end function

@@ -1,0 +1,22 @@
+moverflow = function (lib, mem, exploit)
+	result = lib.overflow(mem, exploit)
+	type = typeof(result)
+	if result != null then
+		if type == "shell" then
+			printcolor(type, "#ff0000")
+			printcolor("Target this as root and remove entry in system.log", "#ff0000")
+		else if	type == "file" or type == "computer" then
+			printcolor(type, "#00ff00")
+			text = null
+			if type == "file" then text = getetcpass(result)
+			if type == "computer" then text = getetcpass(result.File("/"))
+			items = decipherpass(text)
+			for item in items
+				print(item)
+			end for			
+		else
+			printcolor(type, "#ffffff")
+			print(result)
+		end if
+	end if
+end function

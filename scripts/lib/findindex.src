@@ -1,0 +1,16 @@
+// USAGE: 
+// import_code("path/to/findindex.src")
+// list = [item, item, item]
+// somefunction = function (item, value)
+//   return item.something == value
+// end function
+// 
+// index = find_index(list, value, @somefunction) 
+
+findindex = function (list, value, fn)
+	index = 0
+	for item in list
+		if fn(item, value) then return index
+		index = index + 1		
+	end for
+end function

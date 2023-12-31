@@ -1,0 +1,39 @@
+// USAGE:
+// getetcpass(file)
+// parameters: file is type File
+
+getetcpass = function(file)
+	print("Starting search at: " + file.path)
+
+	_gotoroot = function(folder)
+		if folder.parent then
+			return _gotoroot(folder.parent)
+		end if
+		return folder
+	end function
+
+	root = _gotoroot(file)
+	folders = root.get_folders
+	for folder in folders
+		if folder.name == "etc" then
+			if not folder.has_permission("r") then 
+				print("Can't access /etc")
+				return
+			end if
+		
+			files = folder.get_files
+			
+			for file in files
+				if file.name == "passwd" then
+					if file.has_permission("r") then
+						print("Found /etc/passwd. Getting contents...")
+						return file.get_content
+					else 
+						print("Can't access /etc/passwd")
+						return
+					end if
+				end if
+			end for		
+		end if
+	end for
+end function

@@ -1,0 +1,3 @@
+printcolor = function(text, color)
+	print("<color=" + color + ">" + text + "</color>")
+end function

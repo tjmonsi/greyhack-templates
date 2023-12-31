@@ -1,0 +1,24 @@
+import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
+import_code("/home/tjmonsi/scripts/lib/loadcrypto.src")
+import_code("/home/tjmonsi/scripts/lib/printcolor.src")
+import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/tjmonsi/scripts/lib/mscannet.src")
+import_code("/home/tjmonsi/scripts/lib/mscan.src")
+import_code("/home/tjmonsi/scripts/lib/moverflow.src")
+import_code("/home/tjmonsi/scripts/lib/getetcpass.src")
+import_code("/home/tjmonsi/scripts/lib/decipherpass.src")
+
+config = parseparams(program_path.split("/")[-1], ["public_ip", "port_number"], 1)
+
+publicIp = config.public_ip
+portNumber = null
+
+clear_screen
+
+if config.hasIndex("port_number") then portNumber = config.port_number
+
+if not portNumber then
+	mscannet(publicIp)
+else
+	mscannet(publicIp, portNumber.to_int)
+end if

@@ -1,0 +1,7 @@
+// Loads libs from /lib or from /home/[active_user]
+
+// Tests if metaxploit is in lib
+globals.crypto = include_lib("/lib/crypto.so")
+// checks if metaxploit is in /home/active-user
+if not globals.crypto then globals.crypto = include_lib(home_dir + "/crypto.so")
+if not globals.crypto then exit("<color=#ff0000>Load crypto on either lib or home_dir</color>")

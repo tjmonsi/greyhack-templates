@@ -1,0 +1,59 @@
+mscannet = function (ip, port)
+	if not metaxploit then exit("<color=#ff0000>Error: Unable to find 'metaxploit.so'</color>")	
+
+	net_session = null
+	router = get_router(ip)
+	if router then 
+		usedPorts = router.used_ports
+		firewall = router.firewall_rules
+	
+		if port then
+			print("Scan report: " + ip + ":" + port)	
+		else
+			print("Scan report: " + ip)
+		end if
+		print("")
+		print("==============")
+		print("version of kernel_router.so: " + router.kernel_version)
+	
+		if firewall.len > 0 then
+			print("==============")
+			print("firewall rules")
+			for firewall_string in firewall
+				print("rule: " + firewall_string)		
+			end for
+		end if
+		print("==============")
+	end if
+	
+	if port then
+		net_session = metaxploit.net_use(ip, port)
+		port_object = router.ping_port(port)
+		print("Port library info")
+		if port_object then
+			print(router.port_info(port_object))
+		end if		
+		print("==============")
+	else 
+		net_session = metaxploit.net_use(ip)
+	end if
+	
+	if not net_session then return print("No session connected for: " + ip + ":" + port)
+	
+	print("=============")
+	print("Number of connected devices: " + net_session.get_num_conn_gateway)
+	print("Number of port forwarded: " + net_session.get_num_portforward)
+	print("Number of users: " + net_session.get_num_users)
+	print("Are there active users: " + net_session.is_any_active_user)
+	print("Are there active root: " + net_session.is_root_active_user)
+	print("=============")
+
+	lib = net_session.dump_lib
+	
+	options = {
+		"active_root": net_session.is_root_active_user,
+		"ip": ip }
+	if port then options["port"] = port
+	
+	mscan(lib, options)
+end function

@@ -1,0 +1,30 @@
+decipherpass = function (text)
+	crypto = globals.crypto
+	items = []
+
+	if not crypto then exit("Cannot find crypto.so")
+	if not text then 
+		print("No text to decipher")
+		return items
+	end if
+	
+	wait
+	
+	print("Starting deciphering an array of 'user:encrypted_passwd' list...")
+	
+	for string in text.split("\n")
+		array = string.split(":")
+		// checks if it is properly set
+		if not array.hasIndex(1) then continue
+		user = array[0]
+		encrypted_passwd = array[1]
+		
+		if not encrypted_passwd then continue		
+		
+		passwd = crypto.decipher(encrypted_passwd)
+		items.push(user + ":" + passwd)
+		wait	
+	end for
+
+	return items
+end function

@@ -1,0 +1,54 @@
+mscan = function(lib, options)
+	if not metaxploit then exit("<color=#ff0000>Error: Unable to find 'metaxploit.so'</color>")	
+	
+	if not options then
+		options = {}
+	end if
+	
+	memoryList = metaxploit.scan(lib)
+	memIndex = 0
+	
+	for mem in memoryList
+		memIndex = memIndex + 1
+		exploitFullText = metaxploit.scan_address(lib, mem)
+		segments = exploitFullText.split("Unsafe check: ")
+		segmentIndex = 0
+		
+		for segment in segments
+			labelStart = segment.indexOf("<b>")
+			labelEnd = segment.indexOf("</b>")
+			exploit = segment[labelStart + 3: labelEnd]
+			
+			if exploit and exploit != segment then
+				segmentIndex = segmentIndex + 1
+				print("============================")
+				textArray = ["<b><color=#ffff00>" + memIndex + "." + segmentIndex, "-"]
+				if options.hasIndex("ip") then
+					textArray.push(options.ip)
+					if options.hasIndex("port") then
+						textArray.push(options.port)
+					else 
+						textArray.push("0")
+					end if					
+				end if
+				textArray.push(mem)
+				textArray.push(exploit)
+				textArray.push("</color></b>")
+				print(textArray.join(" "))
+				print("============================")
+				print(segment)
+				
+				if options.hasIndex("active_root") then
+					if not options.active_root then
+						// do overflow
+						moverflow(lib, mem, exploit)
+					end if
+				else
+					// do overflow
+					moverflow(lib, mem, exploit)
+				end if
+				print("============================")
+			end if
+		end for
+	end for
+end function
