@@ -16,6 +16,8 @@ if not libNameC then
 else
 	for libName in libs
 		lib = metaxploit.load("/lib/" + libName)
-		print("lib: "+ lib.lib_name + " " + lib.version)
+		if lib then
+			print("lib: "+ lib.lib_name + " " + lib.version)
+		end if
 	end for
 end if
