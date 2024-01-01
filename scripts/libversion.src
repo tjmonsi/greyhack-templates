@@ -1,7 +1,21 @@
-import_code("/home/tjmonsi/scripts/lib/loadmetaxploit.src")
-import_code("/home/tjmonsi/scripts/lib/parseparams.src")
+import_code("/home/Orban/scripts/lib/loadmetaxploit.src")
+import_code("/home/Orban/scripts/lib/parseparams.src")
 
-config = parseparams(program_path.split("/")[-1], ["libName"])
+config = parseparams(program_path.split("/")[-1], ["libName"], 1)
 
-lib = metaxploit.load("/lib/" + config.libName)
-print("lib: "+ lib.lib_name + " " + lib.version)
+libs = ["init.so", "kernel_module.so", "kernel_router.so", "net.so", "aptclient.so", "crypto.so", "metaxploit.so", "libhttp.so", "libssh.so", "libftp.so", "libchat.so", "librshell.so", "librepository.so"]
+
+libNameC = null
+if config.hasIndex("libName") then
+	libNameC = config.libName	
+end if
+
+if not libNameC then
+	lib = metaxploit.load("/lib/" + libNameC)
+	print("lib: "+ lib.lib_name + " " + lib.version)
+else
+	for libName in libs
+		lib = metaxploit.load("/lib/" + libName)
+		print("lib: "+ lib.lib_name + " " + lib.version)
+	end for
+end if
