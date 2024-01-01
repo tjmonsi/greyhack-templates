@@ -1,0 +1,7 @@
+procs = get_shell.host_computer.show_procs
+while true
+	clear_screen
+	print(current_date)
+	print(format_columns(procs))
+	wait(0.2)	
+end while
